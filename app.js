@@ -7,22 +7,24 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Create connection to MySQL
 const db = mysql.createConnection({
-    host: 'testdb-1.c34egoce037f.ap-south-1.rds.amazonaws.com',
+    host: 'ttestdb-1.c5eiswcqudii.us-west-1.rds.amazonaws.com',
     user: 'root',
     password: '12345678',
     database: 'testdb-1'
 });
 
-// Connect to MySQL
-db.connect((err) => {
-    if (err) {
-        throw err;
-    }
-    console.log('MySQL Connected...');
+// Add this temporary diagnostic path to check database status
+app.get('/db-status', (req, res) => {
+    db.query('SELECT 1', (err, result) => {
+        if (err) {
+            return res.status(500).send("Database connection failing: " + err.message);
+        }
+        res.send("Database is connected successfully!");
+    });
 });
 
 // Serve the HTML file
